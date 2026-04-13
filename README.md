@@ -4,6 +4,14 @@ TrueRender is an end-to-end pipeline that reconstructs any real object from casu
 
 
 
-# System Overview
+## System Overview
 
 ![Image](https://github.com/user-attachments/assets/f4dce161-1d19-45f5-a4dc-2fd7c3a762ac)
+
+
+## Models Used
+
+- 3D Gaussian Splatting 
+- Neural-PBIR 
+- PhysDreamer 
+- Sonata + DINOv2
