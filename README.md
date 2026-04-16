@@ -10,8 +10,15 @@ TrueRender is an end-to-end pipeline that reconstructs any real object from casu
 
 
 ## Models Used
-
+- COLMAP
+- SAM 3 META
 - 3D Gaussian Splatting 
 - Neural-PBIR 
 - PhysDreamer 
 - Sonata + DINOv2
+
+
+## Current Status
+
+Full pipeline from video to fram extraction -> COLMAP -> SAM 3 META -> 3D Gaussian Splatting 
+
