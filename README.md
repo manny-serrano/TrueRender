@@ -22,3 +22,18 @@ TrueRender is an end-to-end pipeline that reconstructs any real object from casu
 
 Full pipeline from video to fram extraction -> COLMAP -> SAM 3 META -> 3D Gaussian Splatting 
 
+Phone video
+    ↓ ffmpeg (5fps)
+Frames Extracted
+    ↓ COLMAP SfM
+Camera poses 
+    ↓ image_undistorter
+Undistorted frames + PINHOLE cameras ✓
+    ↓ SAM 2 / SAM 3
+Masked frames (hydroflask only, white background) ← doing this now
+    ↓ replace images in colmap_undistorted/
+3DGS training on masked frames
+    ↓
+Gaussian splat of hydroflask only
+
+
