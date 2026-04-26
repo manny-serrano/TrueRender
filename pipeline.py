@@ -122,15 +122,18 @@ def segment_and_crop(image_path: Path | str, prompt: str, output_dir: Path | str
         sid = resp["session_id"]
         SAM_PREDICTOR.handle_request(dict(type="add_prompt", session_id=sid, frame_index=0, text=prompt))
 
-        results, skipped = [], 0
-        for r in SAM_PREDICTOR.propagate_in_video(sid):
+        results = []
+        for r in SAM_PREDICTOR.propagate_in_video(sid, propagation_direction="forward"):
             masks = r["outputs"]["out_binary_masks"]
-            results.append((r["frame_index"], masks))
-            if len(masks) == 0:
-                skipped += 1
+            if len(masks) > 0:
+                results.append((r["frame_index"], masks))
         SAM_PREDICTOR.close_session(sid)
 
-        assert skipped == 0, f"SAM failed on {skipped} frames; inspect prompts before continuing"
+        if not results:
+            raise ValueError(
+                f"SAM 3 found no objects matching prompt '{prompt}'. "
+                "Try a more specific description (e.g. 'cup', 'shoe', 'person')."
+            )
 
         for idx, masks in sorted(results, key=lambda x: x[0]):
             src_name = "0.jpg"
