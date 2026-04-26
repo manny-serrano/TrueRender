@@ -1,5 +1,14 @@
 from __future__ import annotations
 
+"""TrueRender segmentation and mesh-generation pipeline.
+
+This module was substantially developed with AI assistance in Cursor, including
+the SAM 3 preprocessing flow, TripoSR subprocess orchestration, and compatibility
+patches for Colab package behavior. The generated suggestions were modified and
+debugged against the notebooks and runtime logs; see ATTRIBUTION.md for the
+specific changes, fixes, and third-party sources.
+"""
+
 import glob
 import os
 import shutil

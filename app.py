@@ -1,5 +1,13 @@
 from __future__ import annotations
 
+"""FastAPI web demo for TrueRender.
+
+Portions of this file were developed with AI assistance in Cursor, primarily
+for the job-status API structure and async/background task wiring. The final
+behavior, error handling, and integration with the reconstruction pipeline were
+reviewed and tested by the project author; see ATTRIBUTION.md for details.
+"""
+
 import shutil
 import threading
 import traceback
