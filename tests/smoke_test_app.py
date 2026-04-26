@@ -3,7 +3,7 @@ from io import BytesIO
 from fastapi.testclient import TestClient
 from PIL import Image
 
-import app as truerender_app
+from src import app as truerender_app
 
 
 def test_reconstruct_image_smoke(monkeypatch):
