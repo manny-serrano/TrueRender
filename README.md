@@ -36,7 +36,9 @@ The UI shows progress through segmentation, cropping, mesh generation, and final
 |---|---|---|
 | v1: COLMAP + SAM 3 + 3DGS + SuGaR | PSNR 35.6 dB, L1 = 0.00210 at 7k iterations — usable SuGaR mesh | ~130 min total |
 | v2/v3: VGGT + SAM 3 + 2DGS + TSDF | PSNR 30.6 dB, L1 = 0.00494 — failed quality gate (50 connected components) | ~12–30 min |
-| v4: SAM 3 + TripoSR (final) | Clean single-component OBJ, 3.9 MB, passes geometry validation | Seconds after setup |
+| v4: SAM 3 + TripoSR (final) | Valid single-component OBJ: 3.95 MB, 36,649 vertices, 73,195 faces, 1 connected component | Seconds after setup |
+
+PSNR/L1 are reported for v1-v3 because those pipelines train multi-view splat renderers that can be compared back to source images. v4 directly generates a mesh from a canonical object crop, so it is evaluated by mesh validity, connected components, vertex/face count, file size, visual quality, and runtime instead of render PSNR. The v4 mesh statistics above come from `examples/meshes/meshv4_finalmeshexample_hydroflask.obj`.
 
 The evaluation outcome is qualitative as well as quantitative: v1 produced recognizable geometry but was too slow for an interactive demo, while v2/v3 improved runtime but produced fragmented TSDF meshes around masked regions. v4 avoids multi-view fusion entirely; SAM 3 isolates a clean canonical frame and TripoSR generates a coherent mesh, making it the practical answer to the project question.
 
