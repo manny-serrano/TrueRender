@@ -4,7 +4,7 @@
 
 TrueRender investigates one project goal: can a user turn a single ordinary object photo into a usable, browser-previewable 3D asset without manual modeling or cleanup? The final system uses SAM 3 to segment the prompted object, crops a canonical RGBA input, feeds it to TripoSR for single-image 3D reconstruction, and serves downloadable OBJ/GLB outputs through a FastAPI web app. Earlier research variants explored multi-view reconstruction with COLMAP + 3DGS + SuGaR and faster VGGT + 2DGS + TSDF alternatives; the final demo uses the SAM 3 + TripoSR path because it produced cleaner meshes quickly enough for an interactive workflow.
 
-![TrueRender research progression](assets/evaluation/truerender_research_progression.svg)
+![TrueRender research progression](assets/evaluation/truerender_research_progression_with_model_types.svg)
 
 ---
 
@@ -32,7 +32,7 @@ The UI shows progress through segmentation, cropping, mesh generation, and final
 
 ## Final v4 Pipeline Architecture
 
-![TrueRender v4 pipeline diagram](assets/evaluation/truerender_v4_pipeline_diagram.svg)
+![TrueRender v4 pipeline diagram](assets/evaluation/truerender_v4_pipeline_diagram_with_model_types.svg)
 
 ---
 
