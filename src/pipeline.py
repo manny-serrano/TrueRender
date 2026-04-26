@@ -93,7 +93,13 @@ def load_models() -> None:
     _patch_triposr()
 
     probe = subprocess.run(
-        [sys.executable, "-c", "import sys; import tsr.utils; print(sys.executable); print('tsr.utils import ok')"],
+        [
+            sys.executable,
+            "-c",
+            "import sys, numpy, cv2; import PIL.ImageFont; import torchvision; import tsr.utils; "
+            "print(sys.executable); print('numpy', numpy.__version__); "
+            "print('cv2', cv2.__version__); print('runtime imports ok')",
+        ],
         capture_output=True,
         text=True,
         check=True,
