@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TrueRender Demo</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --accent: #2E5984;
+        --bg: #101418;
+        --panel: #171d24;
+        --text: #eef4fa;
+        --muted: #a9b7c4;
+        --border: #2a3541;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: radial-gradient(circle at top, #1b2836, var(--bg) 42rem);
+        color: var(--text);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      main {
+        width: min(600px, calc(100vw - 32px));
+        margin: 48px auto;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 44px;
+        letter-spacing: -0.04em;
+      }
+
+      .tagline {
+        margin: 8px 0 28px;
+        color: var(--muted);
+      }
+
+      .card {
+        background: rgba(23, 29, 36, 0.92);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #0e1318;
+        color: var(--text);
+        font: inherit;
+        outline: none;
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(46, 89, 132, 0.25);
+      }
+
+      .dropzone {
+        margin-top: 16px;
+        padding: 42px 18px;
+        border: 2px dashed #3a4a5a;
+        border-radius: 18px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.15s ease, background 0.15s ease;
+      }
+
+      .dropzone.dragover {
+        border-color: var(--accent);
+        background: rgba(46, 89, 132, 0.16);
+      }
+
+      .dropzone strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .dropzone span,
+      .status {
+        color: var(--muted);
+      }
+
+      button,
+      .button {
+        display: inline-block;
+        margin-top: 14px;
+        padding: 11px 14px;
+        border: 0;
+        border-radius: 12px;
+        background: var(--accent);
+        color: white;
+        font: inherit;
+        font-weight: 650;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .status {
+        min-height: 24px;
+        margin: 18px 0 0;
+      }
+
+      .error {
+        color: #ffb4b4;
+        white-space: pre-wrap;
+      }
+
+      model-viewer {
+        width: 100%;
+        height: 420px;
+        margin-top: 20px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: #0b0f13;
+      }
+
+      .downloads {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>TrueRender</h1>
+      <p class="tagline">Drop in an object image, segment it with SAM 3, and generate a browser-previewable 3D mesh with TripoSR.</p>
+
+      <section class="card">
+        <label for="prompt">SAM prompt</label>
+        <input id="prompt" type="text" value="the main object" />
+
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Upload image">
+          <strong>Drop an image here</strong>
+          <span>or click to choose a JPG/PNG</span>
+          <input id="fileInput" class="hidden" type="file" accept="image/*" />
+        </div>
+
+        <p id="status" class="status">Ready.</p>
+
+        <div id="viewerWrap" class="hidden">
+          <model-viewer id="viewer" camera-controls auto-rotate shadow-intensity="1" exposure="0.9"></model-viewer>
+          <div class="downloads">
+            <a id="downloadObj" class="button" download>Download OBJ</a>
+            <a id="downloadGlb" class="button" download>Download GLB</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("fileInput");
+      const promptInput = document.getElementById("prompt");
+      const statusEl = document.getElementById("status");
+      const viewerWrap = document.getElementById("viewerWrap");
+      const viewer = document.getElementById("viewer");
+      const downloadObj = document.getElementById("downloadObj");
+      const downloadGlb = document.getElementById("downloadGlb");
+
+      let pollTimer = null;
+
+      function setStatus(message, isError = false) {
+        statusEl.textContent = message;
+        statusEl.className = isError ? "status error" : "status";
+      }
+
+      function upload(file) {
+        if (!file) return;
+        viewerWrap.classList.add("hidden");
+        setStatus("Uploading image...");
+
+        const form = new FormData();
+        form.append("file", file);
+        form.append("prompt", promptInput.value || "the main object");
+
+        fetch("/reconstruct/image", { method: "POST", body: form })
+          .then(async (response) => {
+            if (!response.ok) {
+              const body = await response.json().catch(() => ({}));
+              throw new Error(body.detail || `Request failed with ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(({ job_id }) => pollJob(job_id))
+          .catch((error) => setStatus(error.message, true));
+      }
+
+      function pollJob(jobId) {
+        clearInterval(pollTimer);
+        const tick = () => {
+          fetch(`/jobs/${jobId}`)
+            .then((response) => response.json())
+            .then((job) => {
+              if (job.status === "error") {
+                clearInterval(pollTimer);
+                setStatus(job.error || "Reconstruction failed.", true);
+                return;
+              }
+
+              setStatus(`Status: ${job.stage || job.status}`);
+
+              if (job.status === "done") {
+                clearInterval(pollTimer);
+                viewer.src = job.preview_url || job.mesh_url || job.glb_url;
+                downloadObj.href = job.obj_url;
+                downloadGlb.href = job.glb_url || job.mesh_url;
+                viewerWrap.classList.remove("hidden");
+                setStatus("Done.");
+              }
+            })
+            .catch((error) => {
+              clearInterval(pollTimer);
+              setStatus(error.message, true);
+            });
+        };
+
+        tick();
+        pollTimer = setInterval(tick, 1500);
+      }
+
+      dropzone.addEventListener("click", () => fileInput.click());
+      dropzone.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") fileInput.click();
+      });
+      fileInput.addEventListener("change", () => upload(fileInput.files[0]));
+
+      ["dragenter", "dragover"].forEach((name) => {
+        dropzone.addEventListener(name, (event) => {
+          event.preventDefault();
+          dropzone.classList.add("dragover");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((name) => {
+        dropzone.addEventListener(name, (event) => {
+          event.preventDefault();
+          dropzone.classList.remove("dragover");
+        });
+      });
+
+      dropzone.addEventListener("drop", (event) => {
+        upload(event.dataTransfer.files[0]);
+      });
+    </script>
+  </body>
+</html>

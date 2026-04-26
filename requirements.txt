@@ -1,1 +1,8 @@
-requirements for this project
+fastapi
+uvicorn[standard]
+python-multipart
+trimesh
+pyngrok
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
+pillow
