@@ -38,11 +38,14 @@ def _patch_triposr() -> None:
         raise RuntimeError("Could not find expected rembg_session block in TripoSR run.py")
     code = code.replace(expected, patched, 1)
 
-    expected = "out_mesh_path = os.path.join(output_dir, str(i), f\"mesh.{args.model_save_format}\")"
-    patched = "out_mesh_path = os.path.join(output_dir, str(i), f\"mesh.{args.model_save_format}\")\nos.makedirs(os.path.dirname(out_mesh_path), exist_ok=True)"
-    if expected not in code:
+    import re as _re
+    code, _n = _re.subn(
+        r'([ \t]*)(out_mesh_path = os\.path\.join\(output_dir, str\(i\), f"mesh\.\{args\.model_save_format\}"\))',
+        lambda m: m.group(0) + "\n" + m.group(1) + "os.makedirs(os.path.dirname(out_mesh_path), exist_ok=True)",
+        code, count=1,
+    )
+    if _n == 0:
         raise RuntimeError("Could not find expected out_mesh_path line in TripoSR run.py")
-    code = code.replace(expected, patched, 1)
 
     run_py.write_text(code)
     print("Patched TripoSR run.py for lazy rembg import and robust export directory creation")
