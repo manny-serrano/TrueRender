@@ -96,7 +96,8 @@ def load_models() -> None:
         [
             sys.executable,
             "-c",
-            "import sys, numpy, cv2; import PIL.ImageFont; import torchvision; import tsr.utils; "
+            "import sys, numpy, numpy.random, cv2; import PIL.ImageFont; import torchvision; import tsr.utils; "
+            "from sam3.model_builder import build_sam3_video_predictor; "
             "print(sys.executable); print('numpy', numpy.__version__); "
             "print('cv2', cv2.__version__); print('runtime imports ok')",
         ],
