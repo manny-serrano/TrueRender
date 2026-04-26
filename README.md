@@ -18,7 +18,22 @@ TrueRender investigates one project goal: can a user turn a single ordinary obje
 
 The UI shows progress through segmentation, cropping, mesh generation, and final preview.
 
+
 ---
+
+## Video Links
+
+- **Demo video:** TODO: add direct demo video URL before submission.
+- **Technical walkthrough:** TODO: add direct technical walkthrough video URL before submission.
+
+---
+
+## Final Pipeline Architecture
+
+![TrueRender v4 pipeline diagram](assets/evaluation/truerender_v4_pipeline_diagram.svg)
+
+---
+
 
 ## Segmentation Evidence
 
@@ -27,13 +42,6 @@ The final pipeline uses SAM 3 as the segmentation model before mesh generation. 
 ![Clean Hydro Flask input frame](assets/evaluation/hydroflaskcleanframe.png)
 
 ![SAM 3 segmentation comparison](assets/evaluation/sam3segmentationcomparison.png)
-
----
-
-## Video Links
-
-- **Demo video:** TODO: add direct demo video URL before submission.
-- **Technical walkthrough:** TODO: add direct technical walkthrough video URL before submission.
 
 ---
 
