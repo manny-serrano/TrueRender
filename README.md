@@ -20,6 +20,16 @@ The UI shows progress through segmentation, cropping, mesh generation, and final
 
 ---
 
+## Segmentation Evidence
+
+The final pipeline uses SAM 3 as the segmentation model before mesh generation. The image below shows the clean Hydro Flask input frame used for the single-image path, followed by the SAM 3 segmentation evidence used to isolate the object before sending it to TripoSR.
+
+![Clean Hydro Flask input frame](assets/evaluation/hydroflaskcleanframe.png)
+
+![SAM 3 segmentation comparison](assets/evaluation/sam3segmentationcomparison.png)
+
+---
+
 ## Video Links
 
 - **Demo video:** TODO: add direct demo video URL before submission.
