@@ -37,6 +37,10 @@ The UI shows progress through segmentation, cropping, mesh generation, and final
 
 The evaluation outcome is qualitative as well as quantitative: v1 produced recognizable geometry but was too slow for an interactive demo, while v2/v3 improved runtime but produced fragmented TSDF meshes around masked regions. v4 avoids multi-view fusion entirely; SAM 3 isolates a clean canonical frame and TripoSR generates a coherent mesh, making it the practical answer to the project question.
 
+![2DGS vs SuGaR vs v4 final mesh](assets/evaluation/2DGS_vs_SuGaR_vs_v4_final.png)
+
+Example final mesh: [`examples/meshes/meshv4_finalmeshexample_hydroflask.obj`](examples/meshes/meshv4_finalmeshexample_hydroflask.obj)
+
 ---
 
 ## Individual Contributions
