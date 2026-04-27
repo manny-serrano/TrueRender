@@ -26,7 +26,7 @@ The UI shows progress through segmentation, cropping, mesh generation, and final
 ## Video Links
 
 - **Demo video:** : https://youtu.be/LNDibs-krtM 
-- **Technical walkthrough:** TODO: add direct technical walkthrough video URL before submission.
+- **Technical walkthrough:** : https://youtu.be/C1VoR1lJ6rI 
 
 ---
 
